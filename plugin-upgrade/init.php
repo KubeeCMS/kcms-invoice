@@ -1,13 +1,13 @@
 <?php
 /**
  * Framework Name: YITH License & Upgrade Framework
- * Version:  4.2.0
+ * Version:  4.3.2
  * Author: YITHEMES
  * Text Domain: yith-plugin-upgrade-fw
  * Domain Path: /languages/
  *
  * @author YITH
- * @version 4.1.7
+ * @version 4.3.2
  * @package YITH License & Upgrade Framework
  */
 
@@ -19,6 +19,4 @@
  * http://www.gnu.org/licenses/gpl-3.0.txt
  */
 
-if ( ! defined( 'ABSPATH' ) ) {
-	exit;
-} // Exit if accessed directly
+defined( 'ABSPATH' ) || exit; // Exit if accessed directly.

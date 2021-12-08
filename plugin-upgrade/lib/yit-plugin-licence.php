@@ -43,6 +43,14 @@ if ( ! class_exists( 'YITH_Plugin_Licence' ) ) {
 		protected static $instance = null;
 
 		/**
+		 * The instance of the class YITH_Plugin_Licence_Onboarding
+		 *
+		 * @since 1.0
+		 * @var object
+		 */
+		protected $onboarding_instance = null;
+
+		/**
 		 * Option name
 		 *
 		 * @since 1.0
@@ -87,6 +95,8 @@ if ( ! class_exists( 'YITH_Plugin_Licence' ) ) {
 				'page'        => 'yith_plugins_activation',
 			);
 
+			$this->maybe_load_onboarding();
+
 			add_action( 'admin_menu', array( $this, 'add_submenu_page' ), 99 );
 			add_action( "wp_ajax_yith_activate-{$this->product_type}", array( $this, 'activate' ) );
 			add_action( "wp_ajax_yith_deactivate-{$this->product_type}", array( $this, 'deactivate' ) );
@@ -95,27 +105,41 @@ if ( ! class_exists( 'YITH_Plugin_Licence' ) ) {
 			add_action( 'yit_licence_after_check', 'yith_plugin_fw_force_regenerate_plugin_update_transient' );
 			add_filter( 'extra_plugin_headers', array( $this, 'extra_plugin_headers' ) );
 
-			if( is_multisite() ){
+			if ( is_multisite() ) {
 				add_action( "yith_{$this->product_type}_licence_check", array( $this, 'check_global_license_for_all_blogs' ), 10, 3 );
 
-				//Delete the global license activation for all blogs if the admin add a new site, delete or edit a site
+				// Delete the global license activation for all blogs if the admin add a new site, delete or edit a site.
 				$actions = array(
 					'wp_delete_site',
 					'wp_insert_site',
-					'wp_update_site'
+					'wp_update_site',
 				);
 
-				foreach ( $actions as $action ){
+				foreach ( $actions as $action ) {
 					add_action( $action, array( $this, 'delete_global_license_transient' ) );
 				}
 			}
 		}
 
 		/**
+		 * Maybe load onboarding class
+		 *
+		 * @since 4.3.0
+		 * @author Francesco Licandro
+		 * @return void
+		 */
+		protected function maybe_load_onboarding() {
+			if ( empty( $this->onboarding_instance ) ) {
+				require_once 'yit-plugin-licence-onboarding.php';
+				$this->onboarding_instance = new YITH_Plugin_Licence_Onboarding();
+			}
+		}
+
+		/**
 		 * Get the activation licence url
 		 *
-		 * @return bool|string
 		 * @author Francesco Licandro
+		 * @return bool|string
 		 */
 		public function get_license_url() {
 			return add_query_arg( array( 'page' => 'yith_plugins_activation' ), admin_url( 'admin.php' ) );
@@ -125,9 +149,9 @@ if ( ! class_exists( 'YITH_Plugin_Licence' ) ) {
 		 * Main plugin Instance
 		 *
 		 * @static
-		 * @return object Main instance
-		 * @author Andrea Grillo <andrea.grillo@yithemes.com>
 		 * @since  1.0
+		 * @author Andrea Grillo <andrea.grillo@yithemes.com>
+		 * @return object Main instance
 		 */
 		public static function instance() {
 			if ( is_null( self::$instance ) ) {
@@ -140,9 +164,9 @@ if ( ! class_exists( 'YITH_Plugin_Licence' ) ) {
 		/**
 		 * Add "Activation" submenu page under YITH Plugins
 		 *
-		 * @return void
-		 * @author Andrea Grillo <andrea.grillo@yithemes.com>
 		 * @since  1.0
+		 * @author Andrea Grillo <andrea.grillo@yithemes.com>
+		 * @return void
 		 */
 		public function add_submenu_page() {
 			$no_active_products = $this->get_no_active_licence_key();
@@ -162,13 +186,12 @@ if ( ! class_exists( 'YITH_Plugin_Licence' ) ) {
 		/**
 		 * Premium plugin registration
 		 *
-		 * @param string $plugin_init The plugin init file.
-		 * @param string $secret_key The product secret key.
-		 * @param string $product_id The plugin slug (product_id).
-		 *
-		 * @return void
 		 * @since    1.0
 		 * @author   Andrea Grillo <andrea.grillo@yithemes.com>
+		 * @param string $product_id The plugin slug (product_id).
+		 * @param string $plugin_init The plugin init file.
+		 * @param string $secret_key The product secret key.
+		 * @return void
 		 */
 		public function register( $plugin_init, $secret_key, $product_id ) {
 			if ( ! function_exists( 'get_plugins' ) ) {
@@ -185,8 +208,8 @@ if ( ! class_exists( 'YITH_Plugin_Licence' ) ) {
 		/**
 		 * Get the product type
 		 *
-		 * @return string
 		 * @author Francesco Licandro
+		 * @return string
 		 */
 		public function get_product_type() {
 			return $this->product_type;
@@ -195,9 +218,9 @@ if ( ! class_exists( 'YITH_Plugin_Licence' ) ) {
 		/**
 		 * Get license activation URL
 		 *
-		 * @return string
-		 * @author Andrea Grillo <andrea.grillo@yithemes.com>
 		 * @since 3.0.17
+		 * @author Andrea Grillo <andrea.grillo@yithemes.com>
+		 * @return string
 		 */
 		public static function get_license_activation_url( $plugin_slug = '' ) {
 			$args = array( 'page' => 'yith_plugins_activation' );
@@ -211,10 +234,9 @@ if ( ! class_exists( 'YITH_Plugin_Licence' ) ) {
 		/**
 		 * Add Extra Headers for Marketplace
 		 *
-		 * @param array $headers An array of headers.
-		 *
-		 * @return array
 		 * @author Andrea Grillo <andrea.grillo@yithemes.com>
+		 * @param array $headers An array of headers.
+		 * @return array
 		 */
 		public function extra_plugin_headers( $headers ) {
 			$headers[] = 'YITH Marketplace';
@@ -228,18 +250,16 @@ if ( ! class_exists( 'YITH_Plugin_Licence' ) ) {
 		public function check_global_license_for_all_blogs( $product_init, $activated, $product_type ) {
 			$plugin = $this->get_product( $product_init );
 
-			if( ! empty( $plugin ) ){
+			if ( ! empty( $plugin ) ) {
 				$slug = ! empty( $plugin['product_id'] ) ? $plugin['product_id'] : false;
 
-				if( $slug ){
+				if ( $slug ) {
 					$global_license_information = $this->get_global_license_transient();
 					$data_changed               = false;
-					if( false === $activated ){
+					if ( false === $activated ) {
 						$global_license_information[ $slug ] = false;
 						$data_changed                        = true;
-					}
-
-					else { //Plugin activated
+					} else { // Plugin activated.
 						$blog_ids        = wp_list_pluck( get_sites(), 'blog_id' );
 						$network_enabled = true;
 						foreach ( $blog_ids as $blog_id ) {
@@ -250,18 +270,16 @@ if ( ! class_exists( 'YITH_Plugin_Licence' ) ) {
 							}
 						}
 
-						if( isset( $global_license_information[ $slug ] ) ){
+						if ( isset( $global_license_information[ $slug ] ) ) {
 							$data_changed = (bool) $network_enabled !== (bool) $global_license_information[ $slug ];
-						}
-
-						else {
+						} else {
 							$data_changed = true;
 						}
 
 						$global_license_information[ $slug ] = $network_enabled;
 					}
 
-					if( $data_changed ){
+					if ( $data_changed ) {
 						$this->set_global_license_transient( $global_license_information );
 					}
 				}
@@ -271,21 +289,22 @@ if ( ! class_exists( 'YITH_Plugin_Licence' ) ) {
 		/**
 		 * Get the global license information for all networks
 		 *
-		 * @return mixed Activation array check if exists. False otherwise
 		 * @author Andrea Grillo <andrea.grillo@yithemes.com>
+		 * @return mixed Activation array check if exists. False otherwise
 		 */
-		public function get_global_license_transient(){
+		public function get_global_license_transient() {
 			$data = get_site_transient( $this->check_global_license_transient );
+
 			return $data;
 		}
 
 		/**
 		 * Save the global license information in a transient
 		 *
-		 * @return void
 		 * @author Andrea Grillo <andrea.grillo@yithemes.com>
+		 * @return void
 		 */
-		public function set_global_license_transient( $data ){
+		public function set_global_license_transient( $data ) {
 			$expiration = apply_filters( 'yith_check_global_license_expiration', DAY_IN_SECONDS );
 			set_site_transient( $this->check_global_license_transient, $data, $expiration );
 		}
@@ -293,10 +312,10 @@ if ( ! class_exists( 'YITH_Plugin_Licence' ) ) {
 		/**
 		 * Delete the global license information in a transient
 		 *
-		 * @return void
 		 * @author Andrea Grillo <andrea.grillo@yithemes.com>
+		 * @return void
 		 */
-		public function delete_global_license_transient(){
+		public function delete_global_license_transient() {
 			delete_site_transient( $this->check_global_license_transient );
 		}
 	}
@@ -305,9 +324,9 @@ if ( ! class_exists( 'YITH_Plugin_Licence' ) ) {
 		/**
 		 * Get the main instance of class
 		 *
-		 * @return YITH_Plugin_Licence
-		 * @author Francesco Licandro
 		 * @since  1.0
+		 * @author Francesco Licandro
+		 * @return YITH_Plugin_Licence
 		 */
 		function YITH_Plugin_Licence() { // phpcs:ignore
 			return YITH_Plugin_Licence::instance();

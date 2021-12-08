@@ -102,13 +102,13 @@ if ( ! class_exists( 'YITH_Plugin_Upgrade' ) ) {
 			add_filter( 'pre_set_site_transient_update_plugins', array( $this, 'check_update' ) );
 			add_filter( 'pre_update_site_option_auto_update_plugins', array( $this, 'avoid_auto_update_bulk' ), 10, 4 );
 
-			// on plugin deactivated refresh update plugins transient
+			// on plugin deactivated refresh update plugins transient.
 			add_action( 'deactivated_plugin', array( $this, 'force_regenerate_update_transient_on_deactivated' ), 10, 1 );
 
 			/* Fix Details url on update core page */
 			add_action( 'self_admin_url', array( $this, 'details_plugin_url_in_update_core_page' ), 10, 3 );
 
-			// Fix slug not defined in update core page and prevent update plugins from update core if a plugin not enabled in all network
+			// Fix slug not defined in update core page and prevent update plugins from update core if a plugin not enabled in all network.
 			add_filter( 'site_transient_update_plugins', array( $this, 'filter_site_transient_update_plugins' ) );
 		}
 
@@ -292,23 +292,22 @@ if ( ! class_exists( 'YITH_Plugin_Upgrade' ) ) {
 			$plugin = $this->plugin_upgrading;
 			if ( empty( $plugin ) ) {
 				/* === WordPress 4.9 or greater Support === */
-				$is_bulk        = $upgrader->skin instanceof Bulk_Plugin_Upgrader_Skin;
-				$is_bulk_ajax   = $upgrader->skin instanceof WP_Ajax_Upgrader_Skin;
+				$is_bulk      = $upgrader->skin instanceof Bulk_Plugin_Upgrader_Skin;
+				$is_bulk_ajax = $upgrader->skin instanceof WP_Ajax_Upgrader_Skin;
 				/* === WP-CLI Support === */
-				$is_wp_cli      = $upgrader->skin instanceof WP_CLI\UpgraderSkin;
+				$is_wp_cli = $upgrader->skin instanceof WP_CLI\UpgraderSkin;
 				/* === ManageWP Support === */
-				$is_manageWP 	= $upgrader->skin instanceof MWP_Updater_TraceableUpdaterSkin;
+				$is_manageWP = $upgrader->skin instanceof MWP_Updater_TraceableUpdaterSkin;
 
-				if( $is_wp_cli || $is_manageWP ){
+				if ( $is_wp_cli || $is_manageWP ) {
 					$plugins = YITH_Plugin_Licence()->get_products();
-					foreach( $plugins as $init => $info ){
-						if( $upgrader->skin->plugin_info['Name'] == $info['Name'] ){
+					foreach ( $plugins as $init => $info ) {
+						if ( $upgrader->skin->plugin_info['Name'] == $info['Name'] ) {
 							$plugin = $init;
 							break;
 						}
 					}
-				}
-				elseif ( ! $is_bulk && ! $is_bulk_ajax ) {
+				} elseif ( ! $is_bulk && ! $is_bulk_ajax ) {
 					// Bulk Action: Support for old WordPress Version.
 					$plugin = isset( $upgrader->skin->plugin ) ? $upgrader->skin->plugin : false;
 				} elseif ( $is_bulk_ajax ) {
@@ -447,12 +446,12 @@ if ( ! class_exists( 'YITH_Plugin_Upgrade' ) ) {
 				// If the error code is not 404 but neither a 200 then the upgrade will check on backup system.
 				$body = array_merge(
 					array(
-						'wc-api'      => 'download-api',
-						'request'     => 'download'
+						'wc-api'  => 'download-api',
+						'request' => 'download',
 					),
 					$body
 				);
-				$url = add_query_arg( $body, 'https://casper.yithemes.com' );
+				$url  = add_query_arg( $body, 'https://casper.yithemes.com' );
 				unset( $args['body'] );
 
 				$response = wp_safe_remote_get( $url, $args );
@@ -489,7 +488,7 @@ if ( ! class_exists( 'YITH_Plugin_Upgrade' ) ) {
 		 * @deprecated From version 3.1.12
 		 */
 		public function force_regenerate_update_transient_on_deactivated( $plugin ) {
-			if( isset( $this->plugins[ $plugin ] ) ) {
+			if ( isset( $this->plugins[ $plugin ] ) ) {
 				delete_site_transient( 'update_plugins' );
 			}
 		}
@@ -509,7 +508,6 @@ if ( ! class_exists( 'YITH_Plugin_Upgrade' ) ) {
 
 		/**
 		 * Check for plugins update
-		 *
 		 * If a new plugin version is available set it in the pre_set_site_transient_update_plugins hooks
 		 *
 		 * @since  1.0
@@ -522,34 +520,34 @@ if ( ! class_exists( 'YITH_Plugin_Upgrade' ) ) {
 		public function check_update( $transient, $save = false ) {
 			foreach ( $this->plugins as $init => $plugin ) {
 
-				$plugin_slug    = $this->plugins[ $init ]['slug'];
-				$update_data    = $this->is_update_available( $plugin );
-				$is_activated   = YITH_Plugin_Licence()->check( $init );
+				$plugin_slug  = $this->plugins[ $init ]['slug'];
+				$update_data  = $this->is_update_available( $plugin );
+				$is_activated = YITH_Plugin_Licence()->check( $init );
 
 				$item = array(
-					'id'                => $init,
-					'plugin'            => $init,
-					'slug'              => $plugin_slug,
-					'new_version'       => $plugin['info']['Version'],
-					'url'               => '',
-					'package'           => '',
-					'icons'             => array(),
-					'banners'           => array(),
-					'banners_rtl'       => array(),
-					'tested'            => '',
-					'requires_php'      => '',
-					'compatibility'     => new stdClass(),
+					'id'            => $init,
+					'plugin'        => $init,
+					'slug'          => $plugin_slug,
+					'new_version'   => $plugin['info']['Version'],
+					'url'           => '',
+					'package'       => '',
+					'icons'         => array(),
+					'banners'       => array(),
+					'banners_rtl'   => array(),
+					'tested'        => '',
+					'requires_php'  => '',
+					'compatibility' => new stdClass(),
 				);
 
-				// if not activated disable auto update
+				// If not activated disable auto update.
 				if ( ! $is_activated ) {
 					$item['auto-update-forced'] = false;
 				}
 
 				if ( ! empty( $update_data ) ) {
 
-					$package      = $is_activated ? $this->package_url : '';
-					$wp_version   = preg_replace( '/-.*$/', '', get_bloginfo( 'version' ) );
+					$package    = $is_activated ? $this->package_url : '';
+					$wp_version = preg_replace( '/-.*$/', '', get_bloginfo( 'version' ) );
 
 					if ( strpos( $wp_version, $update_data['tested_up_to'] ) !== false ) {
 						$core_updates                = get_core_updates();
@@ -593,7 +591,7 @@ if ( ! class_exists( 'YITH_Plugin_Upgrade' ) ) {
 		 */
 		protected function is_update_available( $plugin ) {
 
-			$xml        = $this->get_remote_url( $plugin );
+			$xml       = $this->get_remote_url( $plugin );
 			$transient = 'yith_is_update_available_' . md5( $plugin['slug'] );
 
 			$data = get_transient( $transient );
@@ -608,16 +606,24 @@ if ( ! class_exists( 'YITH_Plugin_Upgrade' ) ) {
 					$tested_up_to = (string) str_replace( '.x', '', $data->{'up-to'} );
 					$tested_up_to = preg_replace( '/-.*$/', '', $tested_up_to );
 
-					if( ! empty( $data ) ){
+					if ( ! empty( $data ) ) {
+						// Check if a set of icons is available for this plugin.
+						$preferred_icons = array( 'svg', '2x', '1x', 'default' );
+						$icons           = array();
+
+						foreach ( $preferred_icons as $icon ) {
+							if ( ! empty( $data->icons->$icon ) ) {
+								$icons[ $icon ] = esc_url_raw( (string) $data->icons->$icon );
+							}
+						}
+
 						$data = array(
 							'latest'       => (string) $data->latest,
-							'icons'        => (string) $data->icons,
-							'sanitize'     => (string) $data->sanitize,
+							'icons'        => $icons,
 							'tested_up_to' => (string) $tested_up_to,
 							'changelog'    => (string) $data->changelog,
 						);
 					}
-
 					set_transient( $transient, $data, $expiration );
 				}
 			}
@@ -625,9 +631,6 @@ if ( ! class_exists( 'YITH_Plugin_Upgrade' ) ) {
 			if ( $data ) {
 				$wrong_current_version_check = version_compare( $plugin['info']['Version'], $data['latest'], '>' );
 				$update_available            = version_compare( $data['latest'], $plugin['info']['Version'], '>' );
-				if ( ! empty( $data['icons'] ) && ! empty( $data['sanitize'] ) ) {
-					$data['icons'] = call_user_func( (string) $data['sanitize'], (string) $data['icons']);
-				}
 				if ( $update_available || $wrong_current_version_check ) {
 					return $data;
 				}
@@ -641,17 +644,20 @@ if ( ! class_exists( 'YITH_Plugin_Upgrade' ) ) {
 		 *
 		 * @since 4.1.0
 		 * @author Francesco Licandro
-		 * @param mixed  $value      New value of the network option.
-		 * @param mixed  $old_value  Old value of the network option.
-		 * @param string $option     Option name.
+		 * @param mixed  $value New value of the network option.
+		 * @param mixed  $old_value Old value of the network option.
+		 * @param string $option Option name.
 		 * @param int    $network_id ID of the network.
 		 * @return mixed
 		 */
 		public function avoid_auto_update_bulk( $value, $old_value, $option, $network_id ) {
 
-			$value = array_filter( $value, function( $p ) {
-				return empty( $this->plugins[ $p ] ) || ( is_plugin_active( $p ) && YITH_Plugin_Licence()->check( $p ) );
-			});
+			$value = array_filter(
+				$value,
+				function ( $p ) {
+					return empty( $this->plugins[ $p ] ) || ( is_plugin_active( $p ) && YITH_Plugin_Licence()->check( $p ) );
+				}
+			);
 
 			return $value;
 		}
@@ -679,9 +685,9 @@ if ( ! class_exists( 'YITH_Plugin_Upgrade' ) ) {
 				return;
 			}
 
-			$r            	= $current->response[ $init ];
-			$changelog_id 	= str_replace( array( '/', '.php', '.' ), array( '-', '', '-' ), $init );
-			$details_url 	= $this->get_view_details_url( $init );
+			$r            = $current->response[ $init ];
+			$changelog_id = str_replace( array( '/', '.php', '.' ), array( '-', '', '-' ), $init );
+			$details_url  = $this->get_view_details_url( $init );
 
 			// If is a multisite and cause the licence ar for blog check if for current blog the licence is active.
 			$is_active     = is_multisite() ? YITH_Plugin_Licence()->check( $init ) : ! ! $r->package;
@@ -695,11 +701,9 @@ if ( ! class_exists( 'YITH_Plugin_Upgrade' ) ) {
 				// translators: %1$s, %3$s are placeholders for the plugin name, %2$s the link to open changelog modal, %4$s is the new plugin version.
 				printf( __( 'There is a new version of %1$s available. <a href="%2$s" class="thickbox yit-changelog-button open-plugin-details-modal" title="%3$s">View version %4$s details</a>.', 'yith-plugin-upgrade-fw' ), $this->plugins[ $init ]['info']['Name'], esc_url( $details_url ), esc_attr( $this->plugins[ $init ]['info']['Name'] ), $r->new_version );
 			} elseif ( is_network_admin() ) {
-				if( true === $this->is_enabled_in_all_blogs( $init ) ){
+				if ( true === $this->is_enabled_in_all_blogs( $init ) ) {
 					printf( __( 'There is a new version of %1$s available. <a href="%2$s" class="thickbox yit-changelog-button open-plugin-details-modal" title="%3$s">View version %4$s details</a> or <a href="%5$s" class="%6$s" data-plugin="%7$s" data-slug="%8$s" data-name="%1$s">update now</a>.', 'yith-plugin-upgrade-fw' ), $this->plugins[ $init ]['info']['Name'], esc_url( $details_url ), esc_attr( $this->plugins[ $init ]['info']['Name'] ), $r->new_version, wp_nonce_url( self_admin_url( 'update.php?action=upgrade-plugin&plugin=' ) . $init, 'upgrade-plugin_' . $init ), $update_now_class, $init, $this->plugins[ $init ]['slug'] );
-				}
-
-				else {
+				} else {
 					// translators: %1$s, %3$s are placeholders for the plugin name, %2$s the link to open changelog modal, %4$s is the new plugin version.
 					printf( __( 'There is a new version of %1$s available. <a href="%2$s" class="thickbox yit-changelog-button open-plugin-details-modal" title="%3$s">View version %4$s details</a>. <em>Make sure the plugin license has been activated on each site of the network to benefits from automatic updates.</em>', 'yith-plugin-upgrade-fw' ), $this->plugins[ $init ]['info']['Name'], esc_url( $details_url ), esc_attr( $this->plugins[ $init ]['info']['Name'] ), $r->new_version );
 				}
@@ -814,7 +818,7 @@ if ( ! class_exists( 'YITH_Plugin_Upgrade' ) ) {
 				'server_ip'             => isset( $_SERVER['SERVER_NAME'] ) ? gethostbyname( $_SERVER['SERVER_NAME'] ) : '127.0.0.1',
 				'version'               => isset( $plugin_info['info']['Version'] ) ? $plugin_info['info']['Version'] : '1.0.0',
 				'locale'                => function_exists( 'get_locale' ) ? get_locale() : 'en_US'
-		);
+			);
 
 			$args = apply_filters( 'yith_get_remove_url_args', $args );
 
@@ -824,35 +828,32 @@ if ( ! class_exists( 'YITH_Plugin_Upgrade' ) ) {
 		/**
 		 * Filter the View Details url in update core page
 		 *
+		 * @since 4.1.15
 		 * @param string $url The complete URL including scheme and path.
 		 * @param string $path Path relative to the URL. Blank string if no path is specified.
 		 * @param string $scheme The scheme to use.
-		 *
 		 * @return string Admin URL link with optional path appended.
-		 *
 		 * @autor Andrea Grillo <andrea.grillo@yithemes.com>
-		 * @since 4.1.15
-		 *
 		 */
-		public function details_plugin_url_in_update_core_page( $url, $path, $scheme ){
+		public function details_plugin_url_in_update_core_page( $url, $path, $scheme ) {
 			global $pagenow;
 
-			//In plugins.php page use the filter after_plugin_row_{plugin_init} instead.
-			if( 'plugins.php' !== $pagenow ){
+			// In plugins.php page use the filter after_plugin_row_{plugin_init} instead.
+			if ( 'plugins.php' !== $pagenow ) {
 				$query_args = array();
-				parse_str ( parse_url( $url, PHP_URL_QUERY ), $query_args );
+				parse_str( parse_url( $url, PHP_URL_QUERY ), $query_args );
 
-				if( ! empty( $query_args['plugin'] ) ){
+				if ( ! empty( $query_args['plugin'] ) ) {
 					$product_id = $query_args['plugin'];
 					$transient  = 'yith_update_core_plugins_list';
 					$plugins    = get_transient( $transient );
 
-					if( empty( $plugins ) || count( $plugins ) != count( YITH_Plugin_Licence()->get_products() ) ){
+					if ( empty( $plugins ) || count( $plugins ) != count( YITH_Plugin_Licence()->get_products() ) ) {
 						$plugins = array_flip( wp_list_pluck( YITH_Plugin_Licence()->get_products(), 'product_id' ) );
 						set_transient( $transient, $plugins, DAY_IN_SECONDS );
 					}
 
-					if( isset( $plugins[ $product_id ] ) ){
+					if ( isset( $plugins[ $product_id ] ) ) {
 						$url = $this->get_view_details_url( $plugins[ $product_id ] );
 					}
 				}
@@ -864,15 +865,14 @@ if ( ! class_exists( 'YITH_Plugin_Upgrade' ) ) {
 		/**
 		 * Get the view details url for premium plugins
 		 *
-		 * @param $init string the YITH premium plugin init file
-		 *
-		 * @return string view details url for YITH Premium plugins
-		 *
-		 * @autor Andrea Grillo <andrea.grillo@yithemes.com>
 		 * @since 4.1.15
+		 * @param string $init The YITH premium plugin init file.
+		 * @return string view details url for YITH Premium plugins
+		 * @autor Andrea Grillo <andrea.grillo@yithemes.com>
 		 */
-		public function get_view_details_url( $init ){
+		public function get_view_details_url( $init ) {
 			$url = admin_url( 'admin-ajax.php?action=yith_plugin_fw_get_premium_changelog&tab=plugin-information&plugin=' . $init . '&section=changelog&TB_iframe=true&width=640&height=662' );
+
 			return $url;
 		}
 
@@ -889,20 +889,19 @@ if ( ! class_exists( 'YITH_Plugin_Upgrade' ) ) {
 		public function is_enabled_in_all_blogs( $plugin_init ) {
 			$enabled_in_all_blogs = false;
 			if ( function_exists( 'YITH_Plugin_Licence' ) ) {
-				$license_information  = is_multisite() ? YITH_Plugin_Licence()->get_global_license_transient() : YITH_Plugin_Licence()->get_licence();
-				if( ! empty( $license_information ) ){
+				$license_information = is_multisite() ? YITH_Plugin_Licence()->get_global_license_transient() : YITH_Plugin_Licence()->get_licence();
+				if ( ! empty( $license_information ) ) {
 					$slug = ! empty( $this->plugins[ $plugin_init ]['slug'] ) ? $this->plugins[ $plugin_init ]['slug'] : '';
-					if( ! empty( $slug ) && ! empty( $license_information[ $slug ] ) ){
-						if( is_multisite() ){
+					if ( ! empty( $slug ) && ! empty( $license_information[ $slug ] ) ) {
+						if ( is_multisite() ) {
 							$enabled_in_all_blogs = true;
-						}
-
-						else {
+						} else {
 							$enabled_in_all_blogs = ! empty( $license_information[ $slug ]['activated'] );
 						}
 					}
 				}
 			}
+
 			return $enabled_in_all_blogs;
 		}
 
@@ -910,9 +909,9 @@ if ( ! class_exists( 'YITH_Plugin_Upgrade' ) ) {
 		 * Fix the view details url in plugins.php page.
 		 * Prevent to update the plugins in update-core page if not enabled in all networks
 		 *
-		 * @return mixed $update_plugins filtered transient value
-		 * @author Andrea Grillo <andrea.grillo@yithemes.com>
 		 * @since 4.1.15
+		 * @author Andrea Grillo <andrea.grillo@yithemes.com>
+		 * @return mixed $update_plugins filtered transient value
 		 * @see site_transient_update_plugins filter
 		 */
 		public function filter_site_transient_update_plugins( $update_plugins ) {
@@ -923,13 +922,12 @@ if ( ! class_exists( 'YITH_Plugin_Upgrade' ) ) {
 
 					if ( 'plugins.php' === $pagenow && isset( $update_plugins->response[ $init ]->slug ) ) {
 						unset( $update_plugins->response[ $init ]->slug );
-					}
-
-					elseif ( 'update-core.php' === $pagenow && isset( $update_plugins->response[ $init ] ) && ! $this->is_enabled_in_all_blogs( $init ) ) {
+					} elseif ( 'update-core.php' === $pagenow && isset( $update_plugins->response[ $init ] ) && ! $this->is_enabled_in_all_blogs( $init ) ) {
 						unset( $update_plugins->response[ $init ] );
 					}
 				}
 			}
+
 			return $update_plugins;
 		}
 	}

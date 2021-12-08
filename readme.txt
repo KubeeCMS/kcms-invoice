@@ -1,15 +1,159 @@
-=== YITH WooCommerce PDF Invoice and Shipping List Premium ===
+=== YITH WooCommerce PDF Invoices and Packing Slips Premium ===
 
 Contributors: yithemes
 Tags: woocommerce, orders, woocommerce order, pdf, invoice, pdf invoice, delivery note, pdf invoices, automatic invoice, download, download invoice, bill order, billing, automatic billing, order invoice, billing invoice, new order, processing order, shipping list, shipping document, delivery, packing slip, transport document,  delivery, shipping, order, shop, shop invoice, customer, sell, invoices, email invoice, packing slips
-Requires at least: 5.4
-Tested up to: 5.7
-Stable tag: 2.0.26
+Requires at least: 5.6
+Tested up to: 5.8
+Stable tag: 3.4.0
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 Documentation: https://docs.yithemes.com/yith-woocommerce-pdf-invoice
 
 == Changelog ==
+
+= 3.4.0 - Released on 30 November 2021 =
+
+* New: support for WooCommerce 6.0
+* Update: YITH plugin framework
+* Update: language files
+* Update: updated Help tab with new videos
+* Fix: fixed the placeholders replacement with the credit note number
+* Fix: comparison error on credit notes template
+* Dev: modified the 'ywpi_modify_customer_details_content' filter and function, to allow customize the section title
+* Dev: added new filter 'yith_ywpi_sanitize_document_pattern'
+
+= 3.3.0 - Released on 02 November 2021 =
+
+* New: support for WooCommerce 5.9
+* Update: YITH plugin framework
+* Update: language files
+* Fix: fixed _date_paid placeholder condition checking the datetime
+* Fix: fixed the documents upload to Dropbox if the option is disabled
+* Fix: fixed the option to open link in a new tab on My Account page
+* Dev: changed method to get customer name in the documents table
+* Dev: added a default value when retrieving the data to show on documents
+
+= 3.2.1 - Released on 08 October 2021 =
+
+* Update: YITH plugin framework
+* Fix: changed placeholder '_paid_date' to '_date_paid'
+* Fix: get correct percentage tax in the invoice details
+
+= 3.2.0 - Released on 05 October 2021 =
+
+* New: support for WooCommerce 5.8
+* Update: YITH plugin framework
+* Update: Added new videos to the help tab
+* Fix: fixed pagination of the last page of the table of invoices and credit notes
+* Fix: fixed the CSV export when filtering by dates
+* Fix: fixed invoice number when regenerating the document
+* Dev: improved queries for invoices and credit notes table
+* Dev: improved query when getting orders where credit notes are created
+* Dev: added additional parameter to 'yith_ywpi_style_before_pdf_creation' filter
+* Dev: formatted date when using _paid_date placeholder
+* Dev: added offset to query to export CSV
+
+= 3.1.1 - Released on 27 September 2021 =
+
+* Update: YITH plugin framework
+* Fix: debug info feature removed for all logged in users
+* Dev: fixed an unnecessary database call
+* Dev: improved queries to show invoices and credit notes in the tables
+
+= 3.1.0 - Released on 22 September 2021 =
+
+* New: added new option to hide or show the shipping details in the table of pro-forma invoices and invoices
+* Update: YITH plugin framework
+* Update: language files
+* Fix: fixed dropbox access token saving
+* Fix: fixed Google Drive client loading on unnecessary pages
+* Dev: added new HTML element in invoice totals template
+* Dev: added styles to invoices tables
+* Dev: changed 'Avoid duplicate invoices' option to disabled by default.
+* Dev: Improved performance to get stored invoice numbers when creating the document
+
+= 3.0.2 - Released on 14 September 2021 =
+
+* Fix: get correct sequential invoice number when creating the document
+* Fix: get correct invoice number when regenerating the document
+* Dev: Added responsive mode to the filters of the invoices and credit notes table
+* Dev: Added additional checks to avoid errors
+* Dev: Downgrade guzzlehttp version to 6.X to avoid issues.
+
+= 3.0.1 - Released on 14 September 2021 =
+
+* Fix: fixed YITH Multi Vendor integration issues.
+* Dev: added some style to the invoices/credit notes table
+
+= 3.0.0 - Released on 14 September 2021 =
+
+* New: support for WooCommerce 5.7
+* New: Added Order ID & Order Number option for invoice numbers.
+* New: Added invoice and credit notes table with all order details.
+* New: Added two new designs to generate the documents.
+* New: Added functionality to upload documents to Google Drive.
+* New: Added functionality to download all invoices and all credit notes.
+* Tweak: modified default templates to improve the design.
+* Tweak: code refactoring according to PHPCS.
+* Tweak: Improved content and style for the templates.
+* Update: YITH plugin framework.
+* Update: language files.
+* Update: updated admin texts on the WPML XML config.
+* Dev: reorganization of files and folders ('includes' folder added).
+
+= 2.0.33 - Released on 30 August 2021 =
+
+* Update: YITH plugin framework
+* Fix: fixed templates issues
+
+= 2.0.32 - Released on 26 August 2021 =
+
+* Update: YITH plugin framework
+* Fix: fixed error when creating credit notes
+* Fix: fixed error when creating invoices
+
+= 2.0.31 - Released on 17 August 2021 =
+
+* New: support for WooCommerce 5.6
+* Tweak: added placeholders to receiver pec and receiver id billing fields
+* Update: YITH plugin framework
+* Update: language files
+* Fix: fixed invoice type field not displayed in checkout
+* Fix: fixed the vendor company data not displayed
+* Fix: don't generate the invoices in bulk, if the order is cancelled or failed
+* Dev: new filter 'ywpi_allow_sync_to_dropbox'
+* Dev: changed the hook to create the invoice in the new order created
+
+= 2.0.30 - Released on 07 July 2021 =
+
+* New: support for WooCommerce 5.5
+* New: support for WordPress 5.8
+* Update: YITH plugin framework
+* Update: language files
+* Dev: added new filter 'ywpi_invoice_type_field_default_value'
+
+= 2.0.29 - Released on 31 May 2021 =
+
+* New: support for WooCommerce 5.4
+* Update: YITH plugin framework
+* Update: language files
+
+= 2.0.28 - Released on 20 May 2021 =
+
+* Update: YITH plugin framework
+* Fix: fixed the increment of the progressive file id
+* Fix: progressive ID on XML was wrong for orders processed in bulk
+* Fix: fixed the credit note number increment
+* Dev: new filter 'ywpi_show_totals_in_documents'
+
+= 2.0.27 - Released on 12 May 2021 =
+
+* New: support for WooCommerce 5.3
+* New: added new option to only display the footer in the last page
+* Update: YITH plugin framework
+* Fix: field "Natura" for city Livigno
+* Dev: added new filters yith_ywpdi_mpdf_footer_in_all_pages and yith_ywpdi_mpdf_footer_in_last_page
+* Dev: added new hook yith_ywpi_after_write_mpdf_html_template_pdf
 
 = 2.0.26 - Released on 15 April 2021 =
 

@@ -1,117 +1,117 @@
 <?php
 /**
- * Override this template by copying it to [your theme folder]/woocommerce/yith-pdf-invoice
+ * Receipt details template.
  *
- * @author        Yithemes
- * @package       yith-woocommerce-pdf-invoice-premium/Templates
- * @version       1.0.0
+ * Override this template by copying it to [your theme]/woocommerce/invoice/ywpi-invoice-details.php
+ *
+ * @author  YITH
+ * @package YITH\PDFInvoice\Templates
+ * @version 1.0.0
  */
 
-if ( ! defined ( 'ABSPATH' ) ) {
+if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 } // Exit if accessed directly
-
-
-/** @var YITH_Document $document */
 
 $current_order   = $document->order;
 $invoice_details = new YITH_Invoice_Details( $document );
 
-$table_header_color = get_option('ywpi_table_header_color');
-$table_header_font_color = get_option('ywpi_table_header_font_color');
+$template_selected = yith_ywpi_get_selected_template();
 
-
+$table_header_color      = ( 'default' === $template_selected ) ? wp_kses_post( get_option( 'ywpi_table_header_color' ) ) : wp_kses_post( get_option( 'ywpi_table_header_color_' . $template_selected ) );
+$table_header_font_color = ( 'default' === $template_selected ) ? wp_kses_post( get_option( 'ywpi_table_header_font_color' ) ) : wp_kses_post( get_option( 'ywpi_table_header_font_color_' . $template_selected ) );
 ?>
 
 <table class="invoice-details">
-	<thead style="background-color: <?php echo $table_header_color; ?>; color:<?php echo $table_header_font_color; ?>">
-	<tr style="background-color: <?php echo $table_header_color; ?>; color:<?php echo $table_header_font_color; ?>">
+	<thead style="background-color: <?php echo $table_header_color; ?>; color:<?php echo $table_header_font_color; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>">
+	<tr style="background-color: <?php echo $table_header_color; ?>; color:<?php echo $table_header_font_color; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>">
 
-		<th class="column-product" style="background-color: <?php echo $table_header_color; ?>; color:<?php echo $table_header_font_color; ?>"><?php esc_html_e( 'Product', 'yith-woocommerce-pdf-invoice' ); ?></th>
+		<th class="column-product" style="background-color: <?php echo $table_header_color; ?>; color:<?php echo $table_header_font_color; ?>"><?php esc_html_e( 'Product', 'yith-woocommerce-pdf-invoice' ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?></th>
 
-		<?php if ( ywpi_is_enabled_column_quantity ( $document ) ) : ?>
-			<th class="column-quantity" style="background-color: <?php echo $table_header_color; ?>; color:<?php echo $table_header_font_color; ?>"><?php esc_html_e( 'Qty', 'yith-woocommerce-pdf-invoice' ); ?></th>
+		<?php if ( ywpi_is_enabled_column_quantity( $document ) ) : ?>
+			<th class="column-quantity" style="background-color: <?php echo $table_header_color; ?>; color:<?php echo $table_header_font_color; ?>"><?php esc_html_e( 'Qty', 'yith-woocommerce-pdf-invoice' ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?></th>
 		<?php endif; ?>
 
-        <?php if ( ywpi_is_enabled_column_product_price ( $document ) ) : ?>
-            <th class="column-price" style="background-color: <?php echo $table_header_color; ?>; color:<?php echo $table_header_font_color; ?>"><?php esc_html_e( 'Product price', 'yith-woocommerce-pdf-invoice' ); ?></th>
-        <?php endif; ?>
-
-		<?php if ( ywpi_is_enabled_column_tax ( $document ) ) : ?>
-			<th class="column-price" style="background-color: <?php echo $table_header_color; ?>; color:<?php echo $table_header_font_color; ?>"><?php esc_html_e( 'Tax', 'yith-woocommerce-pdf-invoice' ); ?></th>
+		<?php if ( ywpi_is_enabled_column_product_price( $document ) ) : ?>
+			<th class="column-price" style="background-color: <?php echo $table_header_color; ?>; color:<?php echo $table_header_font_color; ?>"><?php esc_html_e( 'Product price', 'yith-woocommerce-pdf-invoice' ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?></th>
 		<?php endif; ?>
 
-		<?php if ( ywpi_is_enabled_column_percentage_tax ( $document ) ) : ?>
-			<th class="column-price" style="background-color: <?php echo $table_header_color; ?>; color:<?php echo $table_header_font_color; ?>"><?php esc_html_e( 'Percentage tax', 'yith-woocommerce-pdf-invoice' ); ?></th>
+		<?php if ( ywpi_is_enabled_column_tax( $document ) ) : ?>
+			<th class="column-price" style="background-color: <?php echo $table_header_color; ?>; color:<?php echo $table_header_font_color; ?>"><?php esc_html_e( 'Tax', 'yith-woocommerce-pdf-invoice' ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?></th>
 		<?php endif; ?>
 
-		<?php if ( ywpi_is_enabled_column_total_taxed ( $document ) ) : ?>
-			<th class="column-price" style="background-color: <?php echo $table_header_color; ?>; color:<?php echo $table_header_font_color; ?>"><?php esc_html_e( 'Total (inc. tax)', 'yith-woocommerce-pdf-invoice' ); ?></th>
+		<?php if ( ywpi_is_enabled_column_percentage_tax( $document ) ) : ?>
+			<th class="column-price" style="background-color: <?php echo $table_header_color; ?>; color:<?php echo $table_header_font_color; ?>"><?php esc_html_e( 'Percentage tax', 'yith-woocommerce-pdf-invoice' ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?></th>
+		<?php endif; ?>
+
+		<?php if ( ywpi_is_enabled_column_total_taxed( $document ) ) : ?>
+			<th class="column-price" style="background-color: <?php echo $table_header_color; ?>; color:<?php echo $table_header_font_color; ?>"><?php esc_html_e( 'Total (inc. tax)', 'yith-woocommerce-pdf-invoice' ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?></th>
 		<?php endif; ?>
 	</tr>
 	</thead>
 	<tbody>
 	<?php
 
-	/** @var WC_Product $_product */
-	foreach ( $invoice_details->get_order_items () as $item_id => $item ) {
-		$_product = $invoice_details->get_item_product ( $item );
+	foreach ( $invoice_details->get_order_items() as $item_id => $item ) {
+		$_product = $invoice_details->get_item_product( $item );
 		?>
 		<tr>
 
 			<td class="column-product">
 				<!-- Show product title -->
-				<?php echo apply_filters ( 'woocommerce_order_product_title', $item['name'], $_product ); ?>
+				<?php echo wp_kses_post( apply_filters( 'woocommerce_order_product_title', $item['name'], $_product ) ); ?>
 				<br>
 
-				<?php if ( ywpi_is_enabled_column_variation ( $document ) ) : ?>
-					<?php echo urldecode($invoice_details->get_variation_text ( $item_id, $_product )); ?>
-                    <br>
+				<?php if ( ywpi_is_enabled_column_variation( $document ) ) : ?>
+					<?php echo wp_kses_post( urldecode( $invoice_details->get_variation_text( $item_id, $_product ) ) ); ?>
+					<br>
 				<?php endif; ?>
 
-				<?php if ( ywpi_is_enabled_column_sku ( $document ) ) : ?>
-					<?php echo $invoice_details->get_sku_text ( $item, $item_id ); ?>
+				<?php if ( ywpi_is_enabled_column_sku( $document ) ) : ?>
+					<?php echo wp_kses_post( $invoice_details->get_sku_text( $item, $item_id ) ); ?>
 				<?php endif; ?>
 
-				<?php do_action ( 'ywpi_receipt_column_product_after_content', $document, $_product, $item_id ); ?>
+				<?php do_action( 'ywpi_receipt_column_product_after_content', $document, $_product, $item_id ); ?>
 			</td>
-			<?php if ( ywpi_is_enabled_column_quantity ( $document ) ) : ?>
+			<?php if ( ywpi_is_enabled_column_quantity( $document ) ) : ?>
 				<td class="column-quantity">
-					<?php echo ( isset( $item['qty'] ) ) ? esc_html ( $item['qty'] ) : ''; ?>
+					<?php echo ( isset( $item['qty'] ) ) ? esc_html( $item['qty'] ) : ''; ?>
 				</td>
 			<?php endif; ?>
 
-            <?php if ( ywpi_is_enabled_column_product_price ( $document ) ) : ?>
-                <td class="column-price">
-                    <?php echo $invoice_details->get_order_currency_new( $invoice_details->get_item_price_per_unit ( $item ) ); ?>
-                </td>
-            <?php endif; ?>
-
-			<?php if ( ywpi_is_enabled_column_tax ( $document ) ) : ?>
+			<?php if ( ywpi_is_enabled_column_product_price( $document ) ) : ?>
 				<td class="column-price">
-					<?php echo $invoice_details->get_order_currency_new( $item["line_tax"] ); ?>
+					<?php echo wp_kses_post( $invoice_details->get_order_currency_new( $invoice_details->get_item_price_per_unit( $item ) ) ); ?>
 				</td>
 			<?php endif; ?>
 
-			<?php if ( ywpi_is_enabled_column_percentage_tax ( $document ) && isset($item['line_tax']) && isset($item['line_total']) ) : ?>
+			<?php if ( ywpi_is_enabled_column_tax( $document ) ) : ?>
 				<td class="column-price">
-					<?php if( $item['line_total'] != 0 && $item['line_total'] != '' ):
+					<?php echo wp_kses_post( $invoice_details->get_order_currency_new( $item['line_tax'] ) ); ?>
+				</td>
+			<?php endif; ?>
 
-                        $tax_percentage = $item['line_tax'] * 100 / $item['line_total'];
+			<?php if ( ywpi_is_enabled_column_percentage_tax( $document ) && isset( $item['line_tax'] ) && isset( $item['line_total'] ) ) : ?>
+				<td class="column-price">
+					<?php
+					if ( $item['line_total'] != 0 && $item['line_total'] != '' ) : //phpcs:ignore
 
-                        $precision = '1';
+						$tax_percentage = $item['line_tax'] * 100 / $item['line_total'];
 
-                        echo round( $tax_percentage, $precision ) . '%'; ?>
+						$precision = '1';
 
-					<?php else: ?>
+						echo wp_kses_post( round( $tax_percentage, $precision ) . '%' );
+						?>
+
+					<?php else : ?>
 						<?php echo '0%'; ?>
 					<?php endif; ?>
 				</td>
 			<?php endif; ?>
 
-			<?php if ( ywpi_is_enabled_column_total_taxed ( $document ) ) : ?>
+			<?php if ( ywpi_is_enabled_column_total_taxed( $document ) ) : ?>
 				<td class="column-price">
-					<?php echo $invoice_details->get_order_currency_new( $item["line_tax"] + $item["line_total"] ); ?>
+					<?php echo wp_kses_post( $invoice_details->get_order_currency_new( $item['line_tax'] + $item['line_total'] ) ); ?>
 				</td>
 			<?php endif; ?>
 		</tr>

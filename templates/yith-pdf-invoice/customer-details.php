@@ -1,21 +1,21 @@
 <?php
 /**
- * The Template for invoice
+ * Customer details template.
  *
- * Override this template by copying it to [your theme]/woocommerce/yith-pdf-invoice/customer-details.php
+ * Override this template by copying it to [your theme]/woocommerce/invoice/ywpi-invoice-details.php
  *
- * @author        Yithemes
- * @package       yith-woocommerce-pdf-invoice-premium/Templates
- * @version       1.0.0
+ * @author  YITH
+ * @package YITH\PDFInvoice\Templates
+ * @version 1.0.0
  */
 
-if ( ! defined ( 'ABSPATH' ) ) {
+if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 } // Exit if accessed directly
 ?>
 <div class="ywpi-customer-details">
 	<div class="ywpi-customer-content">
-		<?php echo $content; ?>
-		<?php do_action ( 'yith_pdf_invoice_after_customer_content', $document, $order_id ); ?>
+		<?php echo wp_kses_post( $content ); ?>
+		<?php do_action( 'yith_pdf_invoice_after_customer_content', $document, $order_id ); ?>
 	</div>
 </div>

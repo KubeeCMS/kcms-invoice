@@ -10,6 +10,7 @@
         <key name="ywpi_packing_slip_footer"/>
         <key name="ywpi_credit_note_notes"/>
         <key name="ywpi_credit_note_footer"/>
-        <key name="ywpi_credit_note_refund_text"/>
+        <key name="ywpi_dropbox_folder"/>
+        <key name="ywpi_google_drive_folder"/>
     </admin-texts>
 </wpml-config>

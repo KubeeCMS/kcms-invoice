@@ -167,11 +167,11 @@
                             });
 
                             $.yith_license_animation( new_elem, spinner, 'addLine' );
-                            message.find('p.yith-licence-notice-message').html('#' + response.code + ': ' + response.activation_message);
+                            message.find('p.yith-licence-notice-message').html( response.activation_message );
                             message_wrapper.fadeIn();
                             licence_api();
                         } else if (false !== response) {
-                            message_license_key.text('#' + response.code + ': ' + response.error);
+                            message_license_key.text(response.error);
                             message_email.add(message_license_key).addClass('visible');
                             form.addClass('error');
                         } else {
@@ -334,8 +334,10 @@
             email_field.val(email_val);
 
             if ('' === email_val || !is_mail(email_val)) {
-                var to_replace = licence_message.email;
-                message_email.text(licence_message.error.replace('%field%', to_replace));
+                var to_replace = licence_message.email,
+                  error_message = '';
+                error_message = licence_message.error.replace('%field%', to_replace) + '.</br>' + licence_message.be_sure +'.';
+                message_email.html( error_message );
                 message_email.addClass('visible');
                 email.addClass('require error');
             }
@@ -418,6 +420,4 @@
           input_licence_key.trigger( 'focusout' );
         }
       } );
-
-
 } )( jQuery );

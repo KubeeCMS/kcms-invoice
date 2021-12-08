@@ -100,6 +100,9 @@ if ( ! class_exists( 'YIT_Plugin_Panel_WooCommerce' ) ) {
 				add_action( 'admin_enqueue_scripts', array( $this, 'init_wp_with_tabs' ), 11 );
 				add_action( 'admin_init', array( $this, 'maybe_redirect_to_proper_wp_page' ) );
 
+				/* Add UTM tracking code on premium tab */
+				add_filter( 'yith_plugin_fw_premium_landing_uri', array( $this, 'add_utm_data_on_premium_tab' ), 10, 2 );
+
 				// Init actions once to prevent multiple initialization.
 				static::init_actions();
 			}
@@ -216,6 +219,8 @@ if ( ! class_exists( 'YIT_Plugin_Panel_WooCommerce' ) ) {
 
 			if ( 'admin.php' === $pagenow && isset( $_REQUEST['tab'] ) && in_array( $_REQUEST['tab'], $tabs, true ) ) {
 				$tab = sanitize_key( wp_unslash( $_REQUEST['tab'] ) );
+			} elseif ( isset( $_REQUEST['tab'] ) && 'help' === $_REQUEST['tab'] && ! empty( $this->settings['help_tab'] ) ) {
+				$tab = 'help';
 			}
 
 			return apply_filters( 'yith_wc_plugin_panel_current_tab', $tab );
@@ -277,6 +282,8 @@ if ( ! class_exists( 'YIT_Plugin_Panel_WooCommerce' ) ) {
 
 			if ( $custom_tab_options ) {
 				$this->print_custom_tab( $custom_tab_options );
+			} elseif ( $this->is_help_tab() ) {
+				$this->print_help_tab();
 			} else {
 				include YIT_CORE_PLUGIN_TEMPLATE_PATH . '/panel/woocommerce/woocommerce-form.php';
 			}
